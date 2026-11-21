@@ -1,3 +1,18 @@
+# Dependencies
 node_modules/
+.plasmo/
+*.tsbuildinfo
+
+# Sensitive credentials
+.env
+.env.local
+.env.*.local
+
+# Release archives
+release/
+*.zip
+
+# System files
 .DS_Store
 Thumbs.db
+*.log

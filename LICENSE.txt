@@ -1,0 +1,32 @@
+================================================================================
+PRUWEAR (R) - COMMERCIAL SINGLE-USER SOFTWARE LICENSE AGREEMENT
+================================================================================
+
+PRODUCT: Pruwear Realtime Virtual Try-On Extension
+VERSION: 1.0.0 (Production Release)
+COPYRIGHT: (c) Pruwear Systems. All Rights Reserved.
+
+1. GRANT OF LICENSE
+Under this Single-User Commercial License, the Purchaser is granted a perpetual,
+non-exclusive, worldwide right to install, activate, and use the Pruwear Virtual
+Try-On extension on personal and commercial workstations and browser profiles.
+
+2. PRIVACY & DATA SOVEREIGNTY
+- The software executes MediaPipe body tracking locally within the client browser
+  using WebAssembly.
+- Video streams communicate peer-to-peer with Neural AI infrastructure via WebRTC.
+- The Software does NOT harvest, log, store, or sell user video streams,
+  clothing selections, or personal browsing history.
+
+3. THIRD-PARTY API DEPENDENCY
+The realtime virtual clothing transfer functionality utilizes Lucy VTON
+models. Purchaser provides and utilizes their own Neural AI API credentials. Purchaser
+remains subject to standard terms of service.
+
+4. RESTRICTIONS
+Purchaser may not reverse-compile for the purpose of reselling the core proprietary
+brand assets without explicit written authorization from Pruwear Systems.
+
+================================================================================
+For technical documentation, quick start guides, and FAQs, see START_HERE.html.
+================================================================================

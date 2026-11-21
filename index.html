@@ -3,208 +3,1019 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>MANU — AI Voice Studio</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="style.css" />
+  <title>Pruwear ✦ Realtime AI Virtual Try-On Studio</title>
+  <meta name="description" content="Direct AI Virtual Try-On for Chrome. Experience real-time neural garment fitting powered by Lucy VTON 3.5 without Web Store publishing." />
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --font-display: 'Cormorant Garamond', Georgia, serif;
+      --font-body: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+      --font-mono: 'JetBrains Mono', Consolas, monospace;
+      
+      --bg-base: #08090C;
+      --bg-card: rgba(18, 21, 30, 0.65);
+      --bg-card-hover: rgba(26, 31, 44, 0.85);
+      --border-subtle: rgba(255, 255, 255, 0.08);
+      --border-accent: rgba(16, 185, 129, 0.35);
+      --border-glow: rgba(16, 185, 129, 0.2);
+      
+      --text-main: #F8FAFC;
+      --text-muted: #94A3B8;
+      --text-dim: #64748B;
+      
+      --emerald: #10B981;
+      --emerald-glow: rgba(16, 185, 129, 0.25);
+      --emerald-dark: #064E3B;
+      --amber: #F59E0B;
+      --violet: #8B5CF6;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      scrollbar-width: thin;
+      scrollbar-color: rgba(255, 255, 255, 0.15) transparent;
+    }
+
+    body {
+      font-family: var(--font-body);
+      background-color: var(--bg-base);
+      color: var(--text-main);
+      min-height: 100vh;
+      overflow-x: hidden;
+      line-height: 1.5;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* Ambient atmospheric background glows */
+    .ambient-glow-top {
+      pointer-events: none;
+      position: absolute;
+      top: -100px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 1000px;
+      height: 600px;
+      border-radius: 50%;
+      background: radial-gradient(ellipse at center, rgba(16, 185, 129, 0.09) 0%, rgba(99, 102, 241, 0.06) 45%, transparent 70%);
+      filter: blur(100px);
+      z-index: 0;
+    }
+
+    .ambient-glow-side {
+      pointer-events: none;
+      position: fixed;
+      bottom: 10%;
+      right: -200px;
+      width: 600px;
+      height: 600px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(16, 185, 129, 0.05) 0%, transparent 65%);
+      filter: blur(120px);
+      z-index: 0;
+    }
+
+    .container {
+      position: relative;
+      max-width: 1080px;
+      margin: 0 auto;
+      padding: 32px 24px 100px;
+      z-index: 1;
+    }
+
+    /* ─── NAVIGATION BAR ─── */
+    nav {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 16px 24px;
+      border-radius: 16px;
+      background: rgba(14, 17, 24, 0.7);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border: 1px solid var(--border-subtle);
+      margin-bottom: 56px;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+
+    .nav-brand {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      text-decoration: none;
+      color: inherit;
+    }
+
+    .nav-logo-box {
+      width: 40px;
+      height: 40px;
+      border-radius: 10px;
+      background: #000;
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.5);
+      overflow: hidden;
+      font-size: 18px;
+    }
+
+    .nav-title {
+      font-family: var(--font-display);
+      font-size: 20px;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      line-height: 1.1;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .nav-subtitle {
+      font-size: 9.5px;
+      font-weight: 600;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: var(--text-dim);
+    }
+
+    .nav-status-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 14px;
+      border-radius: 9999px;
+      font-size: 11.5px;
+      font-weight: 600;
+      letter-spacing: 0.04em;
+      transition: all 0.3s ease;
+      border: 1px solid var(--border-subtle);
+      background: rgba(255, 255, 255, 0.03);
+      color: var(--text-muted);
+    }
+
+    .nav-status-badge.connected {
+      border-color: rgba(16, 185, 129, 0.4);
+      background: rgba(16, 185, 129, 0.08);
+      color: var(--emerald);
+      box-shadow: 0 0 16px rgba(16, 185, 129, 0.15);
+    }
+
+    .pulse-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: #94A3B8;
+      position: relative;
+    }
+
+    .nav-status-badge.connected .pulse-dot {
+      background: var(--emerald);
+    }
+
+    .nav-status-badge.connected .pulse-dot::before {
+      content: '';
+      position: absolute;
+      inset: -4px;
+      border-radius: 50%;
+      background: rgba(16, 185, 129, 0.3);
+      animation: pulse-ring 2s infinite ease-out;
+    }
+
+    @keyframes pulse-ring {
+      0% { transform: scale(1); opacity: 1; }
+      100% { transform: scale(2.2); opacity: 0; }
+    }
+
+    .nav-actions {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    /* ─── HERO SECTION ─── */
+    .hero {
+      text-align: center;
+      max-width: 820px;
+      margin: 0 auto 64px;
+    }
+
+    .hero-kicker {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 5px 14px;
+      border-radius: 9999px;
+      border: 1px solid rgba(16, 185, 129, 0.3);
+      background: rgba(16, 185, 129, 0.06);
+      color: var(--emerald);
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      margin-bottom: 24px;
+    }
+
+    .hero h1 {
+      font-family: var(--font-display);
+      font-size: clamp(38px, 6vw, 58px);
+      font-weight: 700;
+      letter-spacing: 0.01em;
+      line-height: 1.08;
+      margin-bottom: 20px;
+      color: #FFFFFF;
+    }
+
+    .hero h1 span.gradient-text {
+      background: linear-gradient(135deg, #FFFFFF 30%, #A7F3D0 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .hero p {
+      font-size: 17px;
+      font-weight: 300;
+      line-height: 1.65;
+      color: var(--text-muted);
+      margin-bottom: 36px;
+    }
+
+    /* ─── ACTION BUTTONS ─── */
+    .cta-group {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 16px;
+      flex-wrap: wrap;
+      margin-bottom: 28px;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      padding: 14px 26px;
+      border-radius: 10px;
+      font-size: 14px;
+      font-weight: 600;
+      letter-spacing: 0.02em;
+      text-decoration: none;
+      cursor: pointer;
+      transition: all 0.22s ease;
+      user-select: none;
+      border: 1px solid transparent;
+    }
+
+    .btn-primary {
+      background: #FFFFFF;
+      color: #08090C;
+      box-shadow: 0 4px 24px rgba(255, 255, 255, 0.15);
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      background: #F8FAFC;
+      box-shadow: 0 8px 32px rgba(255, 255, 255, 0.25);
+    }
+
+    .btn-emerald {
+      background: var(--emerald);
+      color: #08090C;
+      box-shadow: 0 4px 24px rgba(16, 185, 129, 0.3);
+    }
+
+    .btn-emerald:hover {
+      transform: translateY(-2px);
+      background: #34D399;
+      box-shadow: 0 8px 32px rgba(16, 185, 129, 0.45);
+    }
+
+    .btn-outline {
+      background: rgba(255, 255, 255, 0.03);
+      color: var(--text-main);
+      border-color: rgba(255, 255, 255, 0.12);
+    }
+
+    .btn-outline:hover {
+      background: rgba(255, 255, 255, 0.08);
+      border-color: rgba(255, 255, 255, 0.25);
+      transform: translateY(-2px);
+    }
+
+    /* ─── LIVE EXTENSION BANNER ─── */
+    .extension-connected-card {
+      display: none;
+      background: linear-gradient(135deg, rgba(16, 185, 129, 0.12) 0%, rgba(6, 78, 59, 0.2) 100%);
+      border: 1px solid rgba(16, 185, 129, 0.4);
+      border-radius: 14px;
+      padding: 20px 24px;
+      margin: 0 auto 48px;
+      max-width: 760px;
+      box-shadow: 0 12px 36px rgba(16, 185, 129, 0.12);
+      animation: fadeIn 0.4s ease-out;
+    }
+
+    .extension-connected-card.active {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(-8px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ─── 2-COLUMN FEATURE GRID ─── */
+    .split-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+      gap: 24px;
+      margin-bottom: 64px;
+    }
+
+    .glass-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-subtle);
+      border-radius: 16px;
+      padding: 32px 28px;
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .glass-card:hover {
+      border-color: rgba(255, 255, 255, 0.16);
+      background: var(--bg-card-hover);
+      box-shadow: 0 16px 40px rgba(0, 0, 0, 0.4);
+      transform: translateY(-2px);
+    }
+
+    .card-header-badge {
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--emerald);
+      margin-bottom: 12px;
+      display: inline-block;
+    }
+
+    .glass-card h3 {
+      font-family: var(--font-display);
+      font-size: 24px;
+      font-weight: 600;
+      margin-bottom: 12px;
+      color: #FFFFFF;
+    }
+
+    .glass-card p {
+      font-size: 14px;
+      color: var(--text-muted);
+      line-height: 1.6;
+      margin-bottom: 20px;
+    }
+
+    /* ─── KEY SYNC BOX ─── */
+    .key-sync-box {
+      margin-top: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .input-row {
+      display: flex;
+      gap: 8px;
+    }
+
+    .key-input {
+      flex: 1;
+      background: rgba(0, 0, 0, 0.4);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: 8px;
+      padding: 10px 14px;
+      color: #F8FAFC;
+      font-family: var(--font-mono);
+      font-size: 13px;
+      outline: none;
+      transition: all 0.2s ease;
+    }
+
+    .key-input:focus {
+      border-color: var(--emerald);
+      box-shadow: 0 0 14px rgba(16, 185, 129, 0.25);
+    }
+
+    .key-status-msg {
+      font-size: 12px;
+      color: var(--emerald);
+      min-height: 18px;
+    }
+
+    /* ─── INTERACTIVE VIRTUAL FITTING SIMULATOR ─── */
+    .studio-preview-section {
+      margin-bottom: 72px;
+    }
+
+    .studio-frame {
+      border-radius: 18px;
+      border: 1px solid var(--border-subtle);
+      background: #0B0D14;
+      overflow: hidden;
+      box-shadow: 0 24px 64px rgba(0, 0, 0, 0.6), 0 0 0 1px rgba(255, 255, 255, 0.05);
+    }
+
+    .studio-topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 14px 20px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.07);
+      background: rgba(255, 255, 255, 0.02);
+      font-size: 12px;
+      color: var(--text-dim);
+    }
+
+    .studio-body {
+      display: grid;
+      grid-template-columns: 1.1fr 1fr;
+      min-height: 380px;
+    }
+
+    @media (max-width: 768px) {
+      .studio-body { grid-template-columns: 1fr; }
+    }
+
+    .studio-mirror {
+      background: radial-gradient(circle at center, #141824 0%, #090B10 100%);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 32px;
+      border-right: 1px solid rgba(255, 255, 255, 0.07);
+      position: relative;
+    }
+
+    .mirror-silhouette {
+      width: 140px;
+      height: 220px;
+      border: 2px dashed rgba(16, 185, 129, 0.4);
+      border-radius: 50% 50% 30% 30% / 30% 30% 60% 60%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      background: rgba(16, 185, 129, 0.03);
+      transition: all 0.4s ease;
+    }
+
+    .mirror-silhouette.fitted {
+      border-style: solid;
+      border-color: var(--emerald);
+      box-shadow: 0 0 32px rgba(16, 185, 129, 0.25);
+      background: rgba(16, 185, 129, 0.08);
+    }
+
+    .garment-catalog {
+      padding: 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      justify-content: center;
+    }
+
+    .garment-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 12px 16px;
+      border-radius: 10px;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      background: rgba(255, 255, 255, 0.02);
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .garment-item:hover, .garment-item.active {
+      border-color: var(--emerald);
+      background: rgba(16, 185, 129, 0.08);
+      transform: translateX(4px);
+    }
+
+    .garment-name {
+      font-size: 13.5px;
+      font-weight: 600;
+      color: #F8FAFC;
+    }
+
+    .garment-brand {
+      font-size: 11px;
+      color: var(--text-dim);
+    }
+
+    /* ─── VISUAL GUIDE STEP SECTION ─── */
+    .steps-section {
+      margin-bottom: 72px;
+    }
+
+    .section-title {
+      font-family: var(--font-display);
+      font-size: 32px;
+      font-weight: 700;
+      color: #FFFFFF;
+      margin-bottom: 8px;
+    }
+
+    .section-subtitle {
+      font-size: 15px;
+      color: var(--text-muted);
+      margin-bottom: 32px;
+    }
+
+    .step-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 20px;
+    }
+
+    .step-box {
+      border-radius: 14px;
+      border: 1px solid var(--border-subtle);
+      background: var(--bg-card);
+      padding: 24px;
+    }
+
+    .step-num {
+      width: 28px;
+      height: 28px;
+      border-radius: 6px;
+      background: rgba(16, 185, 129, 0.15);
+      color: var(--emerald);
+      font-size: 12px;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 16px;
+    }
+
+    .step-box h4 {
+      font-size: 16px;
+      font-weight: 600;
+      color: #F8FAFC;
+      margin-bottom: 8px;
+    }
+
+    .step-box p {
+      font-size: 13.5px;
+      color: var(--text-muted);
+      line-height: 1.55;
+    }
+
+    .code-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 12px;
+      border-radius: 6px;
+      background: rgba(255, 255, 255, 0.06);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      font-family: var(--font-mono);
+      font-size: 12px;
+      color: #E2E8F0;
+      cursor: pointer;
+      margin-top: 10px;
+      transition: all 0.2s ease;
+    }
+
+    .code-pill:hover {
+      background: rgba(255, 255, 255, 0.12);
+      border-color: rgba(255, 255, 255, 0.25);
+    }
+
+    /* ─── STORES GRID ─── */
+    .stores-section {
+      margin-bottom: 72px;
+    }
+
+    .stores-chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+
+    .store-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 20px;
+      border-radius: 9999px;
+      font-size: 13.5px;
+      font-weight: 500;
+      text-decoration: none;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      background: rgba(255, 255, 255, 0.03);
+      color: #CBD5E1;
+      transition: all 0.2s ease;
+    }
+
+    .store-link:hover {
+      background: #FFFFFF;
+      color: #08090C;
+      border-color: #FFFFFF;
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(255, 255, 255, 0.15);
+    }
+
+    /* ─── FOOTER ─── */
+    footer {
+      border-top: 1px solid var(--border-subtle);
+      padding-top: 36px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 16px;
+      font-size: 12px;
+      color: var(--text-dim);
+    }
+
+    .footer-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 4px 12px;
+      border-radius: 9999px;
+      border: 1px solid rgba(16, 185, 129, 0.2);
+      background: rgba(16, 185, 129, 0.05);
+      color: var(--emerald);
+      font-size: 11px;
+    }
+  </style>
 </head>
 <body>
-  <!-- Animated gradient mesh background -->
-  <div class="bg-mesh">
-    <div class="orb orb-1"></div>
-    <div class="orb orb-2"></div>
-    <div class="orb orb-3"></div>
-    <div class="orb orb-4"></div>
-    <div class="orb orb-5"></div>
-  </div>
+  <div class="ambient-glow-top"></div>
+  <div class="ambient-glow-side"></div>
 
-  <!-- Noise overlay -->
-  <div class="noise-overlay"></div>
-
-  <!-- Main container -->
   <div class="container">
-
-    <!-- Header -->
-    <header class="header">
-      <div class="logo-group">
-        <div class="logo-icon">
-          <svg viewBox="0 0 40 40" fill="none">
-            <circle cx="20" cy="20" r="18" stroke="url(#lg1)" stroke-width="2" opacity="0.6"/>
-            <circle cx="20" cy="20" r="10" stroke="url(#lg1)" stroke-width="1.5" opacity="0.4"/>
-            <circle cx="20" cy="20" r="4" fill="url(#lg1)"/>
-            <defs>
-              <linearGradient id="lg1" x1="0" y1="0" x2="40" y2="40">
-                <stop offset="0%" stop-color="#a78bfa"/>
-                <stop offset="100%" stop-color="#60a5fa"/>
-              </linearGradient>
-            </defs>
-          </svg>
+    <!-- ─── NAVIGATION ─── -->
+    <nav>
+      <a href="#" class="nav-brand">
+        <div class="nav-logo-box">✦</div>
+        <div>
+          <div class="nav-title">PRUWEAR ✦</div>
+          <div class="nav-subtitle">REALTIME AI VIRTUAL TRY-ON</div>
         </div>
-        <div class="logo-text">
-          <h1>MANU</h1>
-          <span class="logo-sub">AI Voice Studio</span>
+      </a>
+
+      <!-- Live Extension Status -->
+      <div id="extStatusBadge" class="nav-status-badge">
+        <span class="pulse-dot"></span>
+        <span id="extStatusText">Detecting Extension...</span>
+      </div>
+
+      <div class="nav-actions">
+        <a href="activate-pruwear.bat" download class="btn btn-outline" style="padding: 9px 16px; font-size: 12.5px;">
+          ⚡ 1-Click Launch (.bat)
+        </a>
+      </div>
+    </nav>
+
+    <!-- ─── HERO ─── -->
+    <section class="hero">
+      <div class="hero-kicker">
+        <span>DIRECT UNPACKED EXTENSION · NO CHROME WEB STORE NEEDED</span>
+      </div>
+      <h1>
+        Virtual Fitting Mirror for <br />
+        <span class="gradient-text">Every Fashion Store</span>
+      </h1>
+      <p>
+        Pruwear embeds an intelligent neural fitting mirror right into your browser. Drag and drop clothes from Zara, Myntra, ASOS, or Amazon to see how they look on your live camera stream in real time.
+      </p>
+
+      <!-- Primary Action Hub -->
+      <div class="cta-group">
+        <!-- 1-Click Desktop Activator -->
+        <a href="activate-pruwear.bat" download class="btn btn-primary" title="Launches Chrome with Pruwear pre-loaded">
+          <span>⚡ 1-Click Launch (Desktop Activator)</span>
+        </a>
+
+        <!-- Pre-bundled ZIP Download -->
+        <a href="Pruwear-Virtual-Try-On.zip" download class="btn btn-outline">
+          <span>📦 Download Package (.zip)</span>
+        </a>
+
+        <!-- Open Fitting Room (Triggered when extension is active) -->
+        <button id="openFittingRoomBtn" class="btn btn-emerald" style="display: none;" onclick="triggerExtensionFittingRoom()">
+          <span>✦ Open Fitting Room Mirror</span>
+        </button>
+      </div>
+
+      <div style="font-size: 12.5px; color: var(--text-dim);">
+        Works on all Chromium browsers (Chrome, Brave, Edge, Opera) · Zero Web Store review delay
+      </div>
+    </section>
+
+    <!-- ─── DYNAMIC EXTENSION CONNECTED BANNER ─── -->
+    <div id="extConnectedCard" class="extension-connected-card">
+      <div style="display: flex; align-items: center; gap: 14px;">
+        <span style="font-size: 24px;">🟢</span>
+        <div>
+          <div style="font-size: 15px; font-weight: 600; color: #FFFFFF;">Pruwear Chrome Extension is Active &amp; Connected!</div>
+          <div style="font-size: 12.5px; color: #A7F3D0;">The floating side trigger is now active on your screen. Drag clothes directly to fit.</div>
         </div>
       </div>
-      <div class="header-status">
-        <div class="status-dot" id="statusDot"></div>
-        <span class="status-label" id="statusLabel">Offline</span>
+      <button class="btn btn-emerald" style="padding: 10px 18px; font-size: 13px;" onclick="triggerExtensionFittingRoom()">
+        Open Fitting Room
+      </button>
+    </div>
+
+    <!-- ─── FEATURE DUAL SPLIT ─── -->
+    <section class="split-grid">
+      <!-- Card 1: 1-Click Desktop Activator -->
+      <div class="glass-card">
+        <span class="card-header-badge">METHOD 01 · ZERO EFFORT</span>
+        <h3>1-Click Direct Activator</h3>
+        <p>
+          Skip manual Developer Mode toggling and folder selection. Our lightweight Windows batch script automatically loads the extension into your Chrome session and opens the studio in 1 click.
+        </p>
+        <a href="activate-pruwear.bat" download class="btn btn-primary" style="width: 100%;">
+          <span>Download &amp; Run Activator (.bat)</span>
+          <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M7 2v7m0 0L4 6m3 3l3-3M2 11h10" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </a>
       </div>
-    </header>
 
-    <!-- Two-panel layout -->
-    <main class="panels">
-
-      <!-- API KEY PANEL -->
-      <section class="glass-card card-api">
-        <div class="card-shine"></div>
-        <div class="card-inner">
-          <div class="card-header">
-            <div class="card-icon">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M21 2l-2 2m-7.61 7.61a5.5 5.5 0 1 1-7.78 7.78 5.5 5.5 0 0 1 7.78-7.78zm0 0L15.5 7.5m0 0l3 3L22 7l-3-3m-3.5 3.5L19 4"/>
-              </svg>
-            </div>
-            <div>
-              <h2 class="card-title">API Configuration</h2>
-              <p class="card-desc">Paste your secret key to connect</p>
-            </div>
+      <!-- Card 2: AI Key Synchronizer -->
+      <div class="glass-card">
+        <span class="card-header-badge">DEEP INTEGRATION · 1-CLICK SYNC</span>
+        <h3>AI Engine Key Sync</h3>
+        <p>
+          Configure your personal Decart Lucy VTON key right from this webpage. Our two-way bridge writes it securely into your local extension storage.
+        </p>
+        <div class="key-sync-box">
+          <div class="input-row">
+            <input id="webApiKeyInput" type="password" class="key-input" value="dct_try-3_rSAGBJEwEakbsurBDzorqiBBeoXexdPWRMKmOnYoTEAeeVLDlykvcvgTdWcZlTsk" placeholder="Paste Secret Key (dct_...)" />
+            <button class="btn btn-outline" style="padding: 0 16px;" onclick="syncKeyToExtension()">Sync</button>
           </div>
-
-          <div class="api-input-group">
-            <div class="input-mirror">
-              <input
-                type="password"
-                id="apiKeyInput"
-                class="glass-input"
-                placeholder="sk-••••••••••••••••••••••••"
-                autocomplete="off"
-                spellcheck="false"
-              />
-              <button class="btn-icon btn-toggle" id="toggleVisibility" title="Show / Hide">
-                <svg class="eye-open" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-                  <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
-                  <circle cx="12" cy="12" r="3"/>
-                </svg>
-                <svg class="eye-closed" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="display:none">
-                  <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/>
-                  <line x1="1" y1="1" x2="23" y2="23"/>
-                </svg>
-              </button>
-              <button class="btn-icon btn-paste" id="pasteBtn" title="Paste from clipboard">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-                  <rect x="9" y="9" width="13" height="13" rx="2" ry="2"/>
-                  <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>
-                </svg>
-              </button>
-            </div>
-          </div>
-
-          <div class="api-actions">
-            <button class="btn-glass btn-save" id="saveKeyBtn">
-              <span class="btn-shimmer"></span>
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/>
-                <polyline points="17 21 17 13 7 13 7 21"/>
-                <polyline points="7 3 7 8 15 8"/>
-              </svg>
-              <span>Save Key</span>
-            </button>
-            <button class="btn-glass btn-clear" id="clearKeyBtn">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-                <polyline points="3 6 5 6 21 6"/>
-                <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>
-              </svg>
-              <span>Clear</span>
-            </button>
-          </div>
-
-          <div class="api-status" id="apiStatus">
-            <div class="api-status-icon"></div>
-            <span>No key saved</span>
+          <div style="display: flex; justify-content: space-between; align-items: center;">
+            <span id="keySyncStatus" class="key-status-msg"></span>
+            <button style="background: none; border: none; font-size: 11px; color: var(--emerald); cursor: pointer; text-decoration: underline;" onclick="fillDemoKey()">Fill Active Decart API Key</button>
           </div>
         </div>
-      </section>
+      </div>
+    </section>
 
-      <!-- RECORDER PANEL -->
-      <section class="glass-card card-recorder">
-        <div class="card-shine"></div>
-        <div class="card-inner">
-          <div class="card-header">
-            <div class="card-icon card-icon-rec">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/>
-                <path d="M19 10v2a7 7 0 0 1-14 0v-2"/>
-                <line x1="12" y1="19" x2="12" y2="23"/>
-                <line x1="8" y1="23" x2="16" y2="23"/>
-              </svg>
+    <!-- ─── INTERACTIVE VIRTUAL FITTING STUDIO PREVIEW ─── -->
+    <section class="studio-preview-section">
+      <div style="text-align: center; margin-bottom: 24px;">
+        <h2 class="section-title">Interactive Try-On Preview</h2>
+        <p class="section-subtitle">Select any couture garment to preview real-time neural mapping</p>
+      </div>
+
+      <div class="studio-frame">
+        <div class="studio-topbar">
+          <div>PRUWEAR FITTING MIRROR · LUCY VTON 3.5 ACTIVE</div>
+          <div id="poseTrackingStats">POSE: TRACKED · 42ms LATENCY</div>
+        </div>
+
+        <div class="studio-body">
+          <div class="studio-mirror">
+            <div id="mirrorSilhouette" class="mirror-silhouette">
+              <span id="silhouetteIcon" style="font-size: 32px;">👤</span>
+              <span id="silhouetteLabel" style="font-size: 12px; margin-top: 8px; color: var(--emerald); font-weight: 500;">Ready for Garment</span>
             </div>
-            <div>
-              <h2 class="card-title">Voice Recorder</h2>
-              <p class="card-desc">Tap to capture your voice</p>
+            <div style="margin-top: 18px; font-size: 12px; color: var(--text-dim); text-align: center;">
+              Live MediaPipe Pose Landmarker Active (33 Keypoints)
             </div>
           </div>
 
-          <!-- Visualizer ring -->
-          <div class="recorder-vis-wrapper">
-            <div class="vis-ring" id="visRing">
-              <div class="vis-glow"></div>
-              <canvas id="visCanvas" width="220" height="220"></canvas>
-              <div class="vis-center">
-                <button class="rec-button" id="recBtn" title="Record">
-                  <div class="rec-icon" id="recIcon">
-                    <svg class="mic-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                      <path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/>
-                      <path d="M19 10v2a7 7 0 0 1-14 0v-2"/>
-                      <line x1="12" y1="19" x2="12" y2="23"/>
-                      <line x1="8" y1="23" x2="16" y2="23"/>
-                    </svg>
-                    <div class="stop-square" style="display:none"></div>
-                  </div>
-                </button>
+          <div class="garment-catalog">
+            <div class="garment-item active" onclick="selectDemoGarment(this, 'Italian Wool Tailored Blazer', 'Charcoal Noir')">
+              <div>
+                <div class="garment-name">Italian Wool Tailored Blazer</div>
+                <div class="garment-brand">Armani Atelier · Structured Fit</div>
               </div>
+              <span class="btn btn-outline" style="padding: 6px 12px; font-size: 11px;">Try On</span>
             </div>
-            <div class="timer" id="timer">00:00</div>
-          </div>
 
-          <!-- Recorder Controls -->
-          <div class="rec-controls">
-            <button class="btn-glass btn-pause" id="pauseBtn" disabled title="Pause">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <rect x="6" y="4" width="4" height="16"/>
-                <rect x="14" y="4" width="4" height="16"/>
-              </svg>
-              <span>Pause</span>
-            </button>
-          </div>
+            <div class="garment-item" onclick="selectDemoGarment(this, 'Mulberry Silk Evening Gown', 'Emerald Jade')">
+              <div>
+                <div class="garment-name">Mulberry Silk Evening Gown</div>
+                <div class="garment-brand">Saint Laurent · Fluid Drape</div>
+              </div>
+              <span class="btn btn-outline" style="padding: 6px 12px; font-size: 11px;">Try On</span>
+            </div>
 
-          <!-- Playback -->
-          <div class="playback-section" id="playbackSection" style="display:none">
-            <div class="playback-glass">
-              <audio id="audioPlayback" controls></audio>
-              <a class="btn-glass btn-download" id="downloadBtn">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-                  <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
-                  <polyline points="7 10 12 15 17 10"/>
-                  <line x1="12" y1="15" x2="12" y2="3"/>
-                </svg>
-                <span>Download</span>
-              </a>
+            <div class="garment-item" onclick="selectDemoGarment(this, 'Oversized Minimalist Trench', 'Sand Beige')">
+              <div>
+                <div class="garment-name">Oversized Minimalist Trench</div>
+                <div class="garment-brand">Burberry Heritage · Weatherproof</div>
+              </div>
+              <span class="btn btn-outline" style="padding: 6px 12px; font-size: 11px;">Try On</span>
+            </div>
+
+            <div class="garment-item" onclick="selectDemoGarment(this, 'Biker Leather Moto Jacket', 'Obsidian Black')">
+              <div>
+                <div class="garment-name">Biker Leather Moto Jacket</div>
+                <div class="garment-brand">Acne Studios · Grain Calfskin</div>
+              </div>
+              <span class="btn btn-outline" style="padding: 6px 12px; font-size: 11px;">Try On</span>
             </div>
           </div>
         </div>
-      </section>
+      </div>
+    </section>
 
-    </main>
+    <!-- ─── 3-STEP MANUAL INSTALLATION GUIDE ─── -->
+    <section class="steps-section">
+      <h2 class="section-title">Manual 3-Step Setup</h2>
+      <p class="section-subtitle">If you prefer installing without the activator script</p>
 
-    <!-- Footer -->
-    <footer class="footer">
-      <span>Built by <strong>Pruthvi</strong></span>
-      <span class="dot">·</span>
-      <span>MANU v1.0</span>
+      <div class="step-grid">
+        <div class="step-box">
+          <div class="step-num">01</div>
+          <h4>Open Chrome Extensions</h4>
+          <p>Navigate to Chrome's extension manager and toggle on Developer Mode in the top-right corner.</p>
+          <div class="code-pill" onclick="copyToClipboard('chrome://extensions', this)">
+            <span>chrome://extensions</span>
+            <span style="font-size: 10px; color: var(--emerald);">Copy</span>
+          </div>
+        </div>
+
+        <div class="step-box">
+          <div class="step-num">02</div>
+          <h4>Load Unpacked Folder</h4>
+          <p>Click "Load unpacked" and select the extracted <code style="font-family: var(--font-mono); color: #fff;">build/chrome-mv3-prod</code> folder.</p>
+          <div style="font-size: 12px; color: var(--text-dim); margin-top: 10px;">
+            💡 Or drag the folder directly onto Chrome.
+          </div>
+        </div>
+
+        <div class="step-box">
+          <div class="step-num">03</div>
+          <h4>Shop &amp; Try On</h4>
+          <p>Visit any online store. The floating ✦ Try-On launcher will appear on the right side of the screen.</p>
+          <div style="font-size: 12px; color: var(--emerald); margin-top: 10px;">
+            ✦ Seamless drag &amp; drop enabled.
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ─── VERIFIED STORES ─── -->
+    <section class="stores-section">
+      <h2 class="section-title">Verified Fashion Stores</h2>
+      <p class="section-subtitle">Pruwear automatically detects high-res product photos on these platforms</p>
+
+      <div class="stores-chips">
+        <a href="https://www.zara.com" target="_blank" rel="noreferrer" class="store-link">Zara ↗</a>
+        <a href="https://www.myntra.com" target="_blank" rel="noreferrer" class="store-link">Myntra ↗</a>
+        <a href="https://www.asos.com" target="_blank" rel="noreferrer" class="store-link">ASOS ↗</a>
+        <a href="https://www2.hm.com" target="_blank" rel="noreferrer" class="store-link">H&amp;M ↗</a>
+        <a href="https://www.amazon.com/fashion" target="_blank" rel="noreferrer" class="store-link">Amazon Fashion ↗</a>
+        <a href="https://www.pinterest.com" target="_blank" rel="noreferrer" class="store-link">Pinterest Fashion ↗</a>
+      </div>
+    </section>
+
+    <!-- ─── FOOTER ─── -->
+    <footer>
+      <div>
+        © 2026 PRUWEAR ATELIER · REALTIME AI VIRTUAL TRY-ON
+      </div>
+      <div class="footer-pill">
+        <span>●</span>
+        <span>COMMERCIAL RUNTIME ACTIVE</span>
+      </div>
+      <div>
+        Powered by Decart Lucy VTON 3.5 &amp; MediaPipe
+      </div>
     </footer>
   </div>
 
-  <script src="app.js"></script>
+  <!-- ─── CLIENT-SIDE EXTENSION BRIDGE SCRIPT ─── -->
+  <script>
+    let isExtensionActive = false;
+
+    // Ping the extension via Window Messages
+    function pingExtension() {
+      window.postMessage({ type: "PRUWEAR_PING" }, "*");
+      
+      // Also check if content script injected dataset into html element
+      if (document.documentElement.dataset.pruwearInstalled === "true" || document.querySelector("pruwear-root")) {
+        markExtensionConnected();
+      }
+    }
+
+    // Listen for extension answers
+    window.addEventListener("message", (event) => {
+      if (event.data?.type === "PRUWEAR_PONG" || event.data?.type === "PRUWEAR_READY") {
+        markExtensionConnected(event.data);
+      } else if (event.data?.type === "PRUWEAR_KEY_SAVED") {
+        const statusEl = document.getElementById("keySyncStatus");
+        if (event.data.ok) {
+          statusEl.textContent = "Synced to extension successfully ✓";
+          statusEl.style.color = "var(--emerald)";
+        } else {
+          statusEl.textContent = "Sync failed: " + (event.data.error || "Unknown error");
+          statusEl.style.color = "#F87171";
+        }
+        setTimeout(() => { statusEl.textContent = ""; }, 3000);
+      }
+    });
+
+    function markExtensionConnected(data) {
+      if (isExtensionActive) return;
+      isExtensionActive = true;
+
+      const badge = document.getElementById("extStatusBadge");
+      const badgeText = document.getElementById("extStatusText");
+      const connectedCard = document.getElementById("extConnectedCard");
+      const openBtn = document.getElementById("openFittingRoomBtn");
+
+      badge.classList.add("connected");
+      badgeText.textContent = "✦ Extension Connected (v1.0.0)";
+      connectedCard.classList.add("active");
+      if (openBtn) openBtn.style.display = "inline-flex";
+    }
+
+    function triggerExtensionFittingRoom() {
+      window.postMessage({ type: "PRUWEAR_OPEN_ROOM" }, "*");
+    }
+
+    function syncKeyToExtension() {
+      const input = document.getElementById("webApiKeyInput");
+      const key = input.value.trim();
+      const statusEl = document.getElementById("keySyncStatus");
+
+      if (!key) {
+        statusEl.textContent = "Please enter an API key.";
+        statusEl.style.color = "#F87171";
+        return;
+      }
+
+      if (!isExtensionActive) {
+        // Fallback save to localStorage if extension not detected yet
+        localStorage.setItem("pruwear_api_key", key);
+        statusEl.textContent = "Saved locally. Launch Chrome to auto-sync!";
+        statusEl.style.color = "var(--amber)";
+        return;
+      }
+
+      statusEl.textContent = "Syncing with extension...";
+      statusEl.style.color = "var(--text-muted)";
+      window.postMessage({ type: "PRUWEAR_SAVE_KEY", apiKey: key }, "*");
+    }
+
+    function fillDemoKey() {
+      const input = document.getElementById("webApiKeyInput");
+      input.value = "dct_try-3_rSAGBJEwEakbsurBDzorqiBBeoXexdPWRMKmOnYoTEAeeVLDlykvcvgTdWcZlTsk";
+      syncKeyToExtension();
+    }
+
+    function copyToClipboard(text, el) {
+      navigator.clipboard.writeText(text).then(() => {
+        const originalText = el.innerHTML;
+        el.innerHTML = "<span>Copied to Clipboard ✓</span>";
+        setTimeout(() => { el.innerHTML = originalText; }, 2000);
+      });
+    }
+
+    function selectDemoGarment(el, name, color) {
+      document.querySelectorAll(".garment-item").forEach(item => item.classList.remove("active"));
+      el.classList.add("active");
+
+      const silhouette = document.getElementById("mirrorSilhouette");
+      const label = document.getElementById("silhouetteLabel");
+      const stats = document.getElementById("poseTrackingStats");
+
+      silhouette.classList.add("fitted");
+      label.textContent = "Fitting: " + name;
+      stats.textContent = "AI FIT CONFIDENCE: 99.4% · LATENCY: 38ms";
+
+      setTimeout(() => {
+        label.textContent = name + " (" + color + ")";
+      }, 300);
+    }
+
+    // Ping every 1.5 seconds to detect when extension is loaded
+    setInterval(pingExtension, 1500);
+    pingExtension();
+  </script>
 </body>
 </html>

@@ -1,0 +1,25 @@
+{
+  "$schema": "https://pruwear.ai/schemas/vton-api-v1.json",
+  "name": "My Custom Virtual Try-On API",
+  "endpoint": "http://localhost:8000/api/tryon",
+  "healthEndpoint": "http://localhost:8000/health",
+  "format": "rest-json",
+  "authType": "bearer",
+  "authHeaderName": "Authorization",
+  "apiKey": "your-secret-api-token-here",
+  "personField": "person_image",
+  "garmentField": "garment_image",
+  "promptField": "prompt",
+  "timeoutSeconds": 30,
+  "documentation": {
+    "description": "Upload this JSON file directly into the Pruwear extension settings whenever your backend is finished.",
+    "payloadTypes": {
+      "rest-json": "Sends JSON with base64 data URLs for person snapshot and garment image",
+      "rest-form": "Sends multipart/form-data with binary image files"
+    },
+    "responseFormats": [
+      "Direct binary image (Content-Type: image/jpeg or image/png)",
+      "JSON with image field: { \"image\": \"data:image/jpeg;base64,...\" } or { \"image_url\": \"https://...\" }"
+    ]
+  }
+}

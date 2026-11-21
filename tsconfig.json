@@ -1,0 +1,15 @@
+{
+  "extends": "plasmo/templates/tsconfig.base",
+  "compilerOptions": {
+    "baseUrl": ".",
+    "types": ["chrome", "react", "react-dom"],
+    "paths": { "~*": ["./*"] }
+  },
+  "include": [".plasmo/index.d.ts", "**/*.ts", "**/*.tsx"],
+  "exclude": [
+    "node_modules",
+    "build",
+    "Luxury Onboarding Portal Design",
+    "Luxury Onboarding Screen Design"
+  ]
+}
