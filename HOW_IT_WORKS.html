@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Pruwear — Architecture & Technical Workflow</title>
+  <style>
+    @page {
+      size: A4;
+      margin: 20mm 18mm 20mm 18mm;
+    }
+    
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      color: #1a1a24;
+      line-height: 1.6;
+      background: #ffffff;
+      font-size: 11pt;
+    }
+
+    .cover-header {
+      border-bottom: 3px solid #4f46e5;
+      padding-bottom: 24px;
+      margin-bottom: 32px;
+    }
+
+    .badge {
+      display: inline-block;
+      background: #eef2ff;
+      color: #4338ca;
+      font-size: 9pt;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      padding: 4px 12px;
+      border-radius: 9999px;
+      margin-bottom: 12px;
+    }
+
+    h1 {
+      font-size: 26pt;
+      font-weight: 800;
+      color: #0f172a;
+      letter-spacing: -0.03em;
+      line-height: 1.15;
+      margin-bottom: 8px;
+    }
+
+    .subtitle {
+      font-size: 13pt;
+      color: #64748b;
+      font-weight: 400;
+    }
+
+    .metadata-bar {
+      display: flex;
+      gap: 24px;
+      margin-top: 16px;
+      font-size: 9.5pt;
+      color: #64748b;
+    }
+
+    .metadata-bar strong {
+      color: #334155;
+    }
+
+    h2 {
+      font-size: 15pt;
+      font-weight: 700;
+      color: #1e293b;
+      margin-top: 28px;
+      margin-bottom: 12px;
+      border-bottom: 1px solid #e2e8f0;
+      padding-bottom: 6px;
+      page-break-after: avoid;
+    }
+
+    h3 {
+      font-size: 12pt;
+      font-weight: 600;
+      color: #334155;
+      margin-top: 18px;
+      margin-bottom: 8px;
+      page-break-after: avoid;
+    }
+
+    p {
+      margin-bottom: 12px;
+      color: #334155;
+      text-align: justify;
+    }
+
+    ul, ol {
+      margin-left: 20px;
+      margin-bottom: 14px;
+      color: #334155;
+    }
+
+    li {
+      margin-bottom: 6px;
+    }
+
+    .diagram-box {
+      background: #0f172a;
+      color: #e2e8f0;
+      border-radius: 8px;
+      padding: 18px;
+      font-family: "Cascadia Code", "Consolas", "Courier New", monospace;
+      font-size: 8.5pt;
+      line-height: 1.4;
+      white-space: pre;
+      overflow: hidden;
+      margin: 20px 0;
+      page-break-inside: avoid;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    }
+
+    .callout {
+      background: #f8fafc;
+      border-left: 4px solid #4f46e5;
+      padding: 14px 18px;
+      border-radius: 0 8px 8px 0;
+      margin: 18px 0;
+      page-break-inside: avoid;
+    }
+
+    .callout-title {
+      font-weight: 700;
+      font-size: 10pt;
+      color: #1e293b;
+      margin-bottom: 4px;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .phase-card {
+      background: #ffffff;
+      border: 1px solid #e2e8f0;
+      border-radius: 8px;
+      padding: 16px;
+      margin-bottom: 14px;
+      page-break-inside: avoid;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+    }
+
+    .phase-tag {
+      font-size: 9pt;
+      font-weight: 700;
+      color: #4f46e5;
+      margin-bottom: 4px;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .phase-title {
+      font-size: 11.5pt;
+      font-weight: 700;
+      color: #0f172a;
+      margin-bottom: 6px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 18px 0;
+      font-size: 9.5pt;
+      page-break-inside: avoid;
+    }
+
+    th, td {
+      border: 1px solid #e2e8f0;
+      padding: 10px 12px;
+      text-align: left;
+    }
+
+    th {
+      background: #f1f5f9;
+      font-weight: 700;
+      color: #334155;
+    }
+
+    .footer {
+      margin-top: 40px;
+      border-top: 1px solid #e2e8f0;
+      padding-top: 14px;
+      font-size: 8.5pt;
+      color: #94a3b8;
+      display: flex;
+      justify-content: space-between;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="cover-header">
+    <div class="badge">Technical Specification & Architecture</div>
+    <h1>Pruwear Virtual Try-On</h1>
+    <div class="subtitle">Real-Time In-Browser AI Virtual Fitting Engine & System Workflow</div>
+    <div class="metadata-bar">
+      <div><strong>Platform:</strong> Browser Extension (Chrome & Firefox MV3)</div>
+      <div><strong>Target:</strong> Universal Fashion E-Commerce</div>
+      <div><strong>Classification:</strong> High-Level System Architecture</div>
+    </div>
+  </div>
+
+  <h2>1. Executive Overview</h2>
+  <p>
+    <strong>Pruwear</strong> is an intelligent browser extension that transforms any modern web browser into a live, interactive virtual fitting mirror. Designed for zero-friction consumer shopping, it operates seamlessly across major fashion e-commerce platforms (such as Zara, Myntra, ASOS, H&M, Amazon, Shopify, and bespoke brand boutiques).
+  </p>
+  <p>
+    Shoppers can drag any product photograph from an online catalog directly into their personal fitting mirror, where high-speed neural synthesis models project and drape the chosen garment onto their live body contours in real time.
+  </p>
+
+  <div class="diagram-box">
+┌────────────────────────────────────────────────────────────────────────┐
+│                        E-COMMERCE STOREFRONT                           │
+│  (Zara, Myntra, ASOS, Amazon, H&M, Shopify boutiques)                  │
+│                                                                        │
+│   ┌─────────────────────┐           ┌──────────────────────────────┐   │
+│   │  Garment Product    │  Drag &   │  Floating Shadow-DOM Dock    │   │
+│   │  Master Imagery     │ ────────> │  & Contextual Trigger        │   │
+│   └─────────────────────┘   Drop    └──────────────┬───────────────┘   │
+└────────────────────────────────────────────────────┼───────────────────┘
+                                                     │ postMessage
+                                                     ▼
+┌────────────────────────────────────────────────────────────────────────┐
+│              ISOLATED VIRTUAL FITTING ROOM (Extension Sandbox)         │
+│                                                                        │
+│   ┌───────────────────────────┐      ┌─────────────────────────────┐   │
+│   │   Webcam Feed (User)      │      │ Client-Side Pose Estimation │   │
+│   │   60fps Live Video        │ ───> │ Local WebAssembly Vision    │   │
+│   └─────────────┬─────────────┘      └──────────────┬──────────────┘   │
+│                 │                                   │                  │
+│                 │  Framing Guide & Silhouette Mask  │                  │
+│                 ▼                                   ▼                  │
+│   ┌────────────────────────────────────────────────────────────────┐   │
+│   │            Neural Virtual Try-On Synthesis Pipeline            │   │
+│   │   • Garment Warping & Fabric Drapery Modeling                  │   │
+│   │   • Color, Ambient Lighting, & Contour Harmonization           │   │
+│   │   • Low-Latency Real-Time Video Streaming (WebRTC)             │   │
+│   └────────────────────────────────┬───────────────────────────────┘   │
+│                                    │                                   │
+│                                    ▼                                   │
+│   ┌────────────────────────────────────────────────────────────────┐   │
+│   │            Live Virtual Fitting Mirror Output Screen           │   │
+│   └────────────────────────────────────────────────────────────────┘   │
+└────────────────────────────────────────────────────────────────────────┘</div>
+
+  <h2>2. End-to-End Operational Workflow</h2>
+  <p>
+    The system coordinates five real-time stages to achieve sub-second fitting feedback:
+  </p>
+
+  <div class="phase-card">
+    <div class="phase-tag">Stage 1</div>
+    <div class="phase-title">Non-Invasive Discovery & Shadow DOM Encapsulation</div>
+    <p>
+      When a shopper lands on an e-commerce page, a lightweight content script initializes in <code>document_idle</code> mode. All UI components (floating dock and contextual try-on badges) are attached inside a sealed <strong>Shadow DOM</strong> container (<code>pruwear-root</code>). This ensures 100% style isolation, preventing store styling conflicts and avoiding React hydration collisions on dynamic single-page applications (Next.js, Remix, Vue).
+    </p>
+  </div>
+
+  <div class="phase-card">
+    <div class="phase-tag">Stage 2</div>
+    <div class="phase-title">Intelligent Resolution Escalation & Asset Extraction</div>
+    <p>
+      E-commerce CDNs aggressively downsample images for web efficiency. When an item is dragged:
+    </p>
+    <ul>
+      <li><strong>Attribute Scanning:</strong> The parser examines <code>data-zoom-image</code>, <code>data-old-hires</code>, and dynamic responsive <code>srcset</code> arrays to bypass compressed thumbnails and extract uncompressed master catalog images.</li>
+      <li><strong>Metadata Resolution:</strong> If a product link or card is dragged, the extension's background service worker resolves OpenGraph tags (<code>og:image</code>, <code>twitter:image</code>) to recover the primary clothing article automatically.</li>
+    </ul>
+  </div>
+
+  <div class="phase-card">
+    <div class="phase-tag">Stage 3</div>
+    <div class="phase-title">Client-Side Pose Tracking & Alignment Guidance</div>
+    <p>
+      When the user activates their webcam, an in-browser computer vision engine running directly via <strong>WebAssembly (WASM)</strong> analyzes the stream:
+    </p>
+    <ul>
+      <li><strong>Zero Server Latency:</strong> Body landmark detection and torso segmentation happen completely client-side without transmitting raw frames to the cloud for tracking.</li>
+      <li><strong>Interactive Framing Guide:</strong> Guides the user to optimal distance and posture, ensuring garments are projected with anatomical precision.</li>
+    </ul>
+  </div>
+
+  <div class="phase-card">
+    <div class="phase-tag">Stage 4</div>
+    <div class="phase-title">Neural Virtual Try-On Synthesis</div>
+    <p>
+      Once alignment is confirmed, the neural try-on synthesis pipeline takes over:
+    </p>
+    <ul>
+      <li><strong>3D Volume Mapping:</strong> 2D flat garments are warped onto the 3D volume of the user's posture, simulating fabric tension, folds, and natural drapery.</li>
+      <li><strong>Photometric Harmonization:</strong> Ambient lighting, room shadow angles, and skin-tone transitions are balanced dynamically.</li>
+      <li><strong>Real-Time Video Delivery:</strong> Delivers continuous live video streaming over low-latency WebRTC, allowing the user to turn, step back, and move naturally.</li>
+    </ul>
+  </div>
+
+  <div class="phase-card">
+    <div class="phase-tag">Stage 5</div>
+    <div class="phase-title">Multi-Garment Comparison & History</div>
+    <p>
+      Users can drag and swap multiple garments sequentially to compare combinations, colors, and cuts side-by-side before reaching a checkout decision.
+    </p>
+  </div>
+
+  <h2>3. Privacy, Isolation & Security Design</h2>
+  <div class="callout">
+    <div class="callout-title">Camera & Data Isolation</div>
+    <p>
+      The webcam feed never touches the host retail webpage. All camera access is isolated strictly to the extension's private internal origin (<code>tabs/room.html</code>). Retailers cannot record, intercept, or inspect the user's camera stream.
+    </p>
+  </div>
+  <p>
+    Furthermore, strict Content Security Policies (CSP) enforced by retail or banking sites cannot block the fitting room, as all WebRTC streaming and WebAssembly tasks run in the extension's sandboxed environment.
+  </p>
+
+  <h2>4. Architecture Specifications</h2>
+  <table>
+    <thead>
+      <tr>
+        <th>Subsystem</th>
+        <th>Architecture & Implementation</th>
+        <th>Key Advantage</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>UI Layer</strong></td>
+        <td>Shadow DOM Custom Element</td>
+        <td>Zero style bleed; immune to host CSS overrides</td>
+      </tr>
+      <tr>
+        <td><strong>Body Tracking</strong></td>
+        <td>Client-Side WebAssembly (WASM) Vision</td>
+        <td>60 FPS tracking with zero network latency</td>
+      </tr>
+      <tr>
+        <td><strong>Fitting Room</strong></td>
+        <td>Cross-Origin Extension Sandbox</td>
+        <td>Webcam privacy; completely independent of host CSP</td>
+      </tr>
+      <tr>
+        <td><strong>Neural Synthesis</strong></td>
+        <td>Low-Latency WebRTC & High-Res REST</td>
+        <td>Continuous live motion with photorealistic drapery</td>
+      </tr>
+      <tr>
+        <td><strong>Asset Parser</strong></td>
+        <td>Multi-Resolution Escalation Engine</td>
+        <td>Automatically retrieves master uncompressed photos</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="footer">
+    <div>Pruwear ✦ Realtime Virtual Try-On Architecture</div>
+    <div>Confidential & Proprietary Workflow Specification</div>
+  </div>
+
+</body>
+</html>
