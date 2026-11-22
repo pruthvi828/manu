@@ -7,6 +7,7 @@
 [![Plasmo](https://img.shields.io/badge/Built%20with-Plasmo-blue)](https://docs.plasmo.com/)
 [![React](https://img.shields.io/badge/UI-React%2018-61DAFB?logo=react&logoColor=black)](https://react.dev/)
 [![Status](https://img.shields.io/badge/Ready%20to%20Install-Yes-brightgreen)](#-installation--ready-to-install)
+[![Architecture](https://img.shields.io/badge/Documentation-How%20It%20Works-9cf)](HOW_IT_WORKS.md)
 
 **Pruwear** transforms your browser into an intelligent virtual fitting mirror. Browse any fashion or e-commerce website (Zara, Myntra, ASOS, H&M, Amazon, Shopify, or local brand stores), click on or drag any clothing image directly onto your live mirror, and watch high-speed AI seamlessly scan and dress you in real time.
 
